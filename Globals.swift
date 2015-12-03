@@ -18,6 +18,11 @@ public enum TileType {
     case Wheat
 }
 
+struct TileSquare {
+    var tileType: TileType?
+    var tileColor: UIColor?
+    var tileProbability: Int?
+}
 
 struct Tile {
     var tileType: TileType?
@@ -77,5 +82,9 @@ public class SwiftGraph {
 }
 
 //add edge to source vertex
-
+var tileViewArray = [TileView]()
 let defaultTile = Tile(tileType: nil, tileProbability: nil)
+var tilesArray = [TileSquare]()
+var pickingColors = true
+var typeAndProbTileArray = [Tile]()
+

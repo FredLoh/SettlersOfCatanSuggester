@@ -23,14 +23,18 @@ class TileView: UIView {
 
     func didLoad() {
         //Place your initialization code here
-        self.backgroundColor = FlatSand()
-        self.layer.cornerRadius = 20.0
+        self.backgroundColor = tilesArray[colorIndex].tileColor
+//        self.layer.cornerRadius = 20.0
         self.layer.borderWidth = 1.0
         self.layer.borderColor = UIColor.blackColor().CGColor
         let gesture = UITapGestureRecognizer(target: self, action: "onTap:")
         self.addGestureRecognizer(gesture)
         self.addSubview(probText)
-        probText.text = "2"
+        probText.text = String(Int(arc4random() % 11 + 2))
+        if probText.text == "7" {
+            probText.text = "8"
+        }
+        probText.font = UIFont.systemFontOfSize(50, weight: UIFontWeightRegular)
         probText.snp_makeConstraints { (make) -> Void in
             make.center.equalTo(self)
         }
@@ -46,7 +50,7 @@ class TileView: UIView {
     }
     var probText = UILabel()
     var probability = 0
-    var colorIndex = 0
+    var colorIndex = Int(arc4random() % 6)
     var nextColor: UIColor {
         if colorIndex == tilesArray.count-1 {
             colorIndex = 0

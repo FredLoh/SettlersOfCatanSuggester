@@ -158,16 +158,17 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate {
         scrollView.contentSize = CGSize(width: 1000, height: 1800)
         scrollView.userInteractionEnabled = true
         generateTiles(innerView)
-        innerView.addSubview(nextButton)
+        self.view.addSubview(nextButton)
         nextButton.snp_makeConstraints { (make) -> Void in
-            make.right.top.equalTo(innerView)
+            make.right.top.equalTo(self.view)
             make.height.width.equalTo(75)
         }
         nextButton.setBackgroundImage(UIImage(named: "next"), forState: UIControlState.Normal)
+        nextButton.setBackgroundImage(UIImage(named: "next2"), forState: UIControlState.Selected)
         nextButton.addTarget(self, action: "nextPressed",
             forControlEvents: UIControlEvents.TouchUpInside)
     }
-
+    
     func nextPressed() {
         if nextButton.selected == false {
             pickingColors = false
@@ -191,13 +192,49 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate {
                     type = .Desert
                 }
                 let prob = Int(tile.probText.text!)
-                let newTile = Tile(tileType: type, tileProbability: prob!)
+                let newTile = Tile(tileType: type, tileProbability: prob)
                 typeAndProbTileArray.append(newTile)
             }
-            print(typeAndProbTileArray)
+            var probArray = calculateProbabilityFromBoard()
+            print(probArray)
+            var idx = 0
+            let max = probArray.maxElement()
+            for (index, element) in probArray.enumerate() {
+                if element == max {
+                    idx = index
+                }
+            }
+            print(idx)
+            print(arrayOfTrifectas[idx])
+            let newView = UIView()
+            innerView.addSubview(newView)
+            newView.backgroundColor = UIColor.greenColor()
+            let sq0 = arrayOfTrifectas[idx].square0
+            let sq1 = arrayOfTrifectas[idx].square1
+            let sq2 = arrayOfTrifectas[idx].square2
+            print(sq0?.frame.origin.x)
+            print(sq1?.frame.origin.x)
+            if sq0?.frame.origin.x < sq1?.frame.origin.x
+                && sq0?.frame.origin.y > sq1?.frame.origin.y {
+                print("Sq0 is left of sq1")
+                newView.snp_makeConstraints(closure: { (make) -> Void in
+                    make.height.width.equalTo(20)
+                    make.centerX.equalTo(sq0!.snp_right)
+                    make.centerY.equalTo(sq1!.snp_bottom)
+                })
+            } else if sq0?.frame.origin.x < sq1?.frame.origin.x
+                && sq0?.frame.origin.y < sq1?.frame.origin.y {
+                print("Sq0 is not left of sq1")
+                newView.snp_makeConstraints(closure: { (make) -> Void in
+                    make.height.width.equalTo(20)
+                    make.centerX.equalTo(sq0!.snp_right)
+                    make.centerY.equalTo(sq1!.snp_top)
+                })
+            }
+            probArray[idx] = 0
         }
     }
-
+    
     func shouldCancelImageRecognitionForTesseract(tesseract: G8Tesseract!) -> Bool {
         return false; // return true if you need to interrupt tesseract before it finishes
     }

@@ -11,7 +11,7 @@ import SnapKit
 
 func generateTiles(superView: UIView) {
     let squareSize = 100
-    let offset = 1
+    let offset = 0
     //Top 3
     let tile0 = TileView()
     let tile1 = TileView()
@@ -64,7 +64,7 @@ func generateTiles(superView: UIView) {
 
     tile0.snp_makeConstraints { (make) -> Void in
         make.right.equalTo(tile1.snp_left).offset(-offset)
-        make.top.equalTo(superView)
+        make.top.equalTo(superView).offset(5)
         make.height.width.equalTo(squareSize)
     }
     tile1.snp_makeConstraints { (make) -> Void in
@@ -161,9 +161,30 @@ func generateTiles(superView: UIView) {
         make.left.equalTo(tile17.snp_right).offset(offset)
         make.height.width.equalTo(squareSize)
     }
-
-
+    //Update scroll View
     superView.snp_updateConstraints { (make) -> Void in
         make.bottom.equalTo(tile18.snp_bottom).offset(20)
     }
+    arrayOfTrifectas.append(Trifecta(square0: tile3, square1: tile0, square2: tile4))
+    arrayOfTrifectas.append(Trifecta(square0: tile0, square1: tile4, square2: tile1))
+    arrayOfTrifectas.append(Trifecta(square0: tile4, square1: tile1, square2: tile5))
+    arrayOfTrifectas.append(Trifecta(square0: tile1, square1: tile5, square2: tile2))
+    arrayOfTrifectas.append(Trifecta(square0: tile5, square1: tile2, square2: tile6))
+    arrayOfTrifectas.append(Trifecta(square0: tile7, square1: tile3, square2: tile8))
+    arrayOfTrifectas.append(Trifecta(square0: tile3, square1: tile8, square2: tile4))
+    arrayOfTrifectas.append(Trifecta(square0: tile8, square1: tile4, square2: tile9))
+    arrayOfTrifectas.append(Trifecta(square0: tile4, square1: tile9, square2: tile5))
+    arrayOfTrifectas.append(Trifecta(square0: tile9, square1: tile5, square2: tile10))
+    arrayOfTrifectas.append(Trifecta(square0: tile5, square1: tile10, square2: tile6))
+    arrayOfTrifectas.append(Trifecta(square0: tile10, square1: tile6, square2: tile11))
+    arrayOfTrifectas.append(Trifecta(square0: tile7, square1: tile12, square2: tile8))
+    arrayOfTrifectas.append(Trifecta(square0: tile8, square1: tile13, square2: tile9))
+    arrayOfTrifectas.append(Trifecta(square0: tile13, square1: tile9, square2: tile14))
+    arrayOfTrifectas.append(Trifecta(square0: tile9, square1: tile14, square2: tile10))
+    arrayOfTrifectas.append(Trifecta(square0: tile14, square1: tile10, square2: tile15))
+    arrayOfTrifectas.append(Trifecta(square0: tile10, square1: tile15, square2: tile11))
+    arrayOfTrifectas.append(Trifecta(square0: tile12, square1: tile16, square2: tile13))
+    arrayOfTrifectas.append(Trifecta(square0: tile13, square1: tile17, square2: tile14))
+    arrayOfTrifectas.append(Trifecta(square0: tile17, square1: tile14, square2: tile18))
+    arrayOfTrifectas.append(Trifecta(square0: tile14, square1: tile18, square2: tile15))
 }

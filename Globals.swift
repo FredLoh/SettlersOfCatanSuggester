@@ -18,6 +18,11 @@ public enum TileType {
     case Wheat
 }
 
+struct Trifecta {
+    var square0: TileView?
+    var square1: TileView?
+    var square2: TileView?
+}
 struct TileSquare {
     var tileType: TileType?
     var tileColor: UIColor?
@@ -47,38 +52,38 @@ public class Edge {
 }
 
 public class SwiftGraph {
-        //declare a default directed graph canvas
-        private var canvas: Array<Vertex>
-        public var isDirected: Bool
-        init() {
-            canvas = Array<Vertex>()
-            isDirected = true
-        }
-        //create a new vertex
-        func addVertex(tile tile: Tile) -> Vertex {
+    //declare a default directed graph canvas
+    private var canvas: Array<Vertex>
+    public var isDirected: Bool
+    init() {
+        canvas = Array<Vertex>()
+        isDirected = true
+    }
+    //create a new vertex
+    func addVertex(tile tile: Tile) -> Vertex {
         //set the key
         let childVertex: Vertex = Vertex()
         childVertex.tile = tile
         //add the vertex to the graph canvas
         canvas.append(childVertex)
         return childVertex
+    }
+    func addEdge(source source: Vertex, neighbor: Vertex, weight: Int) {
+        let newEdge = Edge()
+        //establish the default properties
+        newEdge.neighbor = neighbor
+        newEdge.weight = weight
+        source.neighbors.append(newEdge)
+        //check condition for an undirected graph
+        if isDirected == false {
+            //create a new reversed edge
+            let reverseEdge = Edge()
+            //establish the reversed properties
+            reverseEdge.neighbor = source
+            reverseEdge.weight = weight
+            neighbor.neighbors.append(reverseEdge)
         }
-        func addEdge(source source: Vertex, neighbor: Vertex, weight: Int) {
-            let newEdge = Edge()
-            //establish the default properties
-            newEdge.neighbor = neighbor
-            newEdge.weight = weight
-            source.neighbors.append(newEdge)
-            //check condition for an undirected graph
-            if isDirected == false {
-                //create a new reversed edge
-                let reverseEdge = Edge()
-                //establish the reversed properties
-                reverseEdge.neighbor = source
-                reverseEdge.weight = weight
-                neighbor.neighbors.append(reverseEdge)
-            }
-        }
+    }
 }
 
 //add edge to source vertex
@@ -87,4 +92,4 @@ let defaultTile = Tile(tileType: nil, tileProbability: nil)
 var tilesArray = [TileSquare]()
 var pickingColors = true
 var typeAndProbTileArray = [Tile]()
-
+var arrayOfTrifectas = [Trifecta]()

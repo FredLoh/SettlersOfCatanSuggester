@@ -8,20 +8,15 @@
 
 import Foundation
 
-/*  Given the following board returns list of probabilities per tile type
-Clay: 5,11,8,9,8,7,9   Forest: 10,2,7,12,10,7  Sheep: 7,8,3,2,12,11
-Stone: 7,8,2,6,8,3     Wheat: 2,9,11,2,10,9
-*/
 func getProbabilityByTileType(arrayOfTiles: [Tile]) -> Int {
     return 0
 }
 
-func calculateProbabilityForTrifecta(firstTile: Tile = defaultTile, secondTile: Tile = defaultTile,
-    thirdTile: Tile = defaultTile)->Int {
-
-     return getProbability(firstTile.tileProbability) +
-            getProbability(secondTile.tileProbability) +
-            getProbability(thirdTile.tileProbability)
+func calculateProbabilityForTrifecta(firstTile: TileView, secondTile: TileView,
+    thirdTile: TileView) -> Int {
+        return getProbability(Int(firstTile.probText.text!)) +
+            getProbability(Int(secondTile.probText.text!)) +
+            getProbability(Int(thirdTile.probText.text!))
 }
 
 func getProbability(inputNumber: Int?) -> Int {
@@ -43,7 +38,7 @@ func getProbability(inputNumber: Int?) -> Int {
         return 0
     }
 }
-func getTotalTileTypeProbability(board: [Tile], tileType: TileType)->Int {
+func getTotalTileTypeProbability(board: [Tile], tileType: TileType) -> Int {
     var clayProbability = 0
     for tile in board {
         if tile.tileType == tileType {
@@ -51,4 +46,17 @@ func getTotalTileTypeProbability(board: [Tile], tileType: TileType)->Int {
         }
     }
     return clayProbability
+}
+
+func calculateProbabilityFromBoard() -> [Int] {
+    var probArray = [Int]()
+
+    for trifecta in arrayOfTrifectas {
+        let tile0 = trifecta.square0
+        let tile1 = trifecta.square1
+        let tile2 = trifecta.square2
+        probArray.append(calculateProbabilityForTrifecta(tile0!,
+                            secondTile: tile1!, thirdTile: tile2!))
+    }
+    return probArray
 }

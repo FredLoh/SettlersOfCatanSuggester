@@ -23,28 +23,11 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     let hexagonView = Hexagon()
     let okButton = UIButton()
     let nextButton = UIButton()
-    
+    let calcProbButton = UIButton()
+    var probArray: [Int]?
     let scrollView = UIScrollView()
     let innerView = UIView()
-    
-    func imagePickerController(picker: UIImagePickerController,
-        didFinishPickingMediaWithInfo info: [String : AnyObject]) {
-            imagePicker!.dismissViewControllerAnimated(true, completion: nil)
-            let image = info[UIImagePickerControllerOriginalImage] as? UIImage
-            
-            let tesseract = G8Tesseract(language: "eng")
-            tesseract.delegate = self
-            tesseract.engineMode = .TesseractCubeCombined
-            tesseract.setVariableValue("0123456789", forKey: "tessedit_char_whitelist")
-            tesseract.setVariableValue("\".;:, ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
-                forKey: "tessedit_char_blacklist")
-            //            tesseract.image = scaleImage(image!,
-            //                maxDimension: 300)
-            tesseract.image = image!.g8_grayScale()
-            tesseract.recognize()
-            print(tesseract.recognizedText)
-    }
-    
+
     func ok() {
         imagePicker = UIImagePickerController()
         imagePicker?.delegate = self
@@ -52,9 +35,9 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate {
         imagePicker!.sourceType = .Camera
         presentViewController(imagePicker!, animated: true, completion: nil)
     }
-    
+
     func scaleImage(image: UIImage, maxDimension: CGFloat) -> UIImage {
-        
+
         var scaledSize = CGSize(width: maxDimension, height: maxDimension)
         var scaleFactor: CGFloat
         if image.size.width > image.size.height {
@@ -66,18 +49,18 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate {
             scaledSize.height = maxDimension
             scaledSize.width = scaledSize.height * scaleFactor
         }
-        
+
         UIGraphicsBeginImageContext(scaledSize)
         image.drawInRect(CGRectMake(0, 0, scaledSize.width, scaledSize.height))
         let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
-        
+
         return scaledImage
     }
     override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
         return UIInterfaceOrientationMask.Landscape
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         //        line1.backgroundColor = UIColor.redColor()
@@ -85,7 +68,8 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate {
         //        okButton.backgroundColor = UIColor.greenColor()
         //        hexagonView.backgroundColor = UIColor.clearColor()
         //        okButton.setTitle("Ok", forState: UIControlState.Normal)
-        //        okButton.addTarget(self, action: "ok", forControlEvents: UIControlEvents.TouchUpInside)
+        //        okButton.addTarget(self, action: "ok",
+        //forControlEvents: UIControlEvents.TouchUpInside)
         //        self.view.addSubview(line1)
         //        self.view.addSubview(line2)
         //        self.view.addSubview(okButton)
@@ -159,16 +143,25 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate {
         scrollView.userInteractionEnabled = true
         generateTiles(innerView)
         self.view.addSubview(nextButton)
+        self.view.addSubview(calcProbButton)
         nextButton.snp_makeConstraints { (make) -> Void in
             make.right.top.equalTo(self.view)
+            make.height.width.equalTo(75)
+        }
+        calcProbButton.snp_makeConstraints { (make) -> Void in
+            make.right.bottom.equalTo(self.view)
             make.height.width.equalTo(75)
         }
         nextButton.setBackgroundImage(UIImage(named: "next"), forState: UIControlState.Normal)
         nextButton.setBackgroundImage(UIImage(named: "next2"), forState: UIControlState.Selected)
         nextButton.addTarget(self, action: "nextPressed",
             forControlEvents: UIControlEvents.TouchUpInside)
+        calcProbButton.setBackgroundImage(UIImage(named: "ten"), forState: UIControlState.Normal)
+        calcProbButton.addTarget(self, action: "calcProb",
+                                forControlEvents: UIControlEvents.TouchUpInside)
+        calcProbButton.enabled = false
     }
-    
+
     func nextPressed() {
         if nextButton.selected == false {
             pickingColors = false
@@ -195,46 +188,52 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate {
                 let newTile = Tile(tileType: type, tileProbability: prob)
                 typeAndProbTileArray.append(newTile)
             }
-            var probArray = calculateProbabilityFromBoard()
-            print(probArray)
-            var idx = 0
-            let max = probArray.maxElement()
+            probArray = calculateProbabilityFromBoard()
+            showNextProbability = false
+            calcProbButton.enabled = true
+            nextButton.enabled = false
+        }
+    }
+    func calcProb() {
+        gen(innerView, probArray: &probArray!)
+    }
+    func gen(innerView: UIView, inout probArray: [Int]) {
+        var idx = 0
+        let max = probArray.maxElement()
+        if max != 0 {
             for (index, element) in probArray.enumerate() {
                 if element == max {
                     idx = index
                 }
             }
-            print(idx)
-            print(arrayOfTrifectas[idx])
-            let newView = UIView()
+            let newView = CatanHouse()
+            newView.backgroundColor = UIColor.clearColor()
             innerView.addSubview(newView)
-            newView.backgroundColor = UIColor.greenColor()
+//            newView.backgroundColor = UIColor.greenColor()
             let sq0 = arrayOfTrifectas[idx].square0
             let sq1 = arrayOfTrifectas[idx].square1
             let sq2 = arrayOfTrifectas[idx].square2
-            print(sq0?.frame.origin.x)
-            print(sq1?.frame.origin.x)
             if sq0?.frame.origin.x < sq1?.frame.origin.x
                 && sq0?.frame.origin.y > sq1?.frame.origin.y {
-                print("Sq0 is left of sq1")
-                newView.snp_makeConstraints(closure: { (make) -> Void in
-                    make.height.width.equalTo(20)
-                    make.centerX.equalTo(sq0!.snp_right)
-                    make.centerY.equalTo(sq1!.snp_bottom)
-                })
+                    newView.snp_makeConstraints(closure: { (make) -> Void in
+                        make.height.width.equalTo(20)
+                        make.centerX.equalTo(sq0!.snp_right)
+                        make.centerY.equalTo(sq1!.snp_bottom)
+                    })
             } else if sq0?.frame.origin.x < sq1?.frame.origin.x
                 && sq0?.frame.origin.y < sq1?.frame.origin.y {
-                print("Sq0 is not left of sq1")
-                newView.snp_makeConstraints(closure: { (make) -> Void in
-                    make.height.width.equalTo(20)
-                    make.centerX.equalTo(sq0!.snp_right)
-                    make.centerY.equalTo(sq1!.snp_top)
-                })
+                    newView.snp_makeConstraints(closure: { (make) -> Void in
+                        make.height.width.equalTo(20)
+                        make.centerX.equalTo(sq0!.snp_right)
+                        make.centerY.equalTo(sq1!.snp_top)
+                    })
             }
             probArray[idx] = 0
+        } else {
+            calcProbButton.enabled = false
         }
     }
-    
+
     func shouldCancelImageRecognitionForTesseract(tesseract: G8Tesseract!) -> Bool {
         return false; // return true if you need to interrupt tesseract before it finishes
     }

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 class Hexagon: UIView {
     override func drawRect(rect: CGRect) {
@@ -21,7 +22,5 @@ class Hexagon: UIView {
         UIColor.blackColor().setStroke()
         bezierPath.lineWidth = 2
         bezierPath.stroke()
-
-
     }
 }

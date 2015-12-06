@@ -15,16 +15,16 @@ class TileView: UIView {
         super.init(frame: frame)
         didLoad()
     }
-
+    
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         didLoad()
     }
-
+    
     func didLoad() {
         //Place your initialization code here
         self.backgroundColor = tilesArray[colorIndex].tileColor
-//        self.layer.cornerRadius = 20.0
+        //        self.layer.cornerRadius = 20.0
         self.layer.borderWidth = 1.0
         self.layer.borderColor = UIColor.blackColor().CGColor
         let gesture = UITapGestureRecognizer(target: self, action: "onTap:")
@@ -39,13 +39,15 @@ class TileView: UIView {
             make.center.equalTo(self)
         }
     }
-
+    
     func onTap(sender: UITapGestureRecognizer) {
         if pickingColors == true {
             self.backgroundColor = nextColor
             probText.textColor = ContrastColorOf(self.backgroundColor!, returnFlat: true)
         } else {
-            probText.text = nextProbability
+            if showNextProbability == true {
+                probText.text = nextProbability
+            }
         }
     }
     var probText = UILabel()

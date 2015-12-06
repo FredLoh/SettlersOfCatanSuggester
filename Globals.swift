@@ -91,5 +91,6 @@ var tileViewArray = [TileView]()
 let defaultTile = Tile(tileType: nil, tileProbability: nil)
 var tilesArray = [TileSquare]()
 var pickingColors = true
+var showNextProbability = true
 var typeAndProbTileArray = [Tile]()
 var arrayOfTrifectas = [Trifecta]()
